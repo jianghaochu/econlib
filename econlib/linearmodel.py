@@ -1,6 +1,9 @@
 """
+linearmodel.py
+===============================================
 This module defines the class of linear models.
 """
+
 import pandas as pd
 import numpy as np
 
@@ -8,15 +11,27 @@ from econlib.result import Result
 
 
 class LinearModel:
+    """The class stores the basic information of a linear model.
+
+    :param y: an array of the exogenous variable
+    :type y: pandas.Series or numpy.array
+    :param x: an array of the endogenous variables
+    :type x: pandas.DataFrame or numpy.array
+    """
 
     def __init__(self, y=None, x=None):
+        """The constructor function"""
         self.y = y
         self.x = x
 
     def ols(self, y=None, x=None):
-        # Ordinary least squares regression of a linear model
-        # @param y: endogenous variable
-        # @param x: exogenous variable
+        """Ordinary least squares regression of a linear model.
+
+        :param y: an array of the exogenous variable
+        :type y: pandas.Series or numpy.array
+        :param x: an array of the endogenous variables
+        :type x: pandas.DataFrame or numpy.array
+        """
         if y is None:
             y = self.y
         if x is None:
@@ -43,8 +58,8 @@ class LinearModel:
 if __name__ == '__main__':
     n, k = 100, 2
     beta = np.array([1, 1, 10])
-    x = np.concatenate([np.ones((n, 1)), np.random.randn(n, k)], axis=1)
-    y = np.matmul(x, beta) + np.random.randn(n)
-    linear_model = LinearModel(y=y, x=x)
+    xx = np.concatenate([np.ones((n, 1)), np.random.randn(n, k)], axis=1)
+    yy = np.matmul(xx, beta) + np.random.randn(n)
+    linear_model = LinearModel(y=yy, x=xx)
     ols_result = linear_model.ols()
     ols_result.summary()

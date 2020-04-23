@@ -9,6 +9,7 @@ class Result:
         self.residual = None
         self.y_name = None
         self.x_name = None
+        self.r_square = None
 
     def summary(self, tol=3):
         print('The coefficients are: ')
