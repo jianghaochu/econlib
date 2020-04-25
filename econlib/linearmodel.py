@@ -33,28 +33,37 @@ class LinearModel:
         :type x: pandas.DataFrame or numpy.array
         """
         if y is None:
-            y = self.y
+            y = self.y.copy()
         if x is None:
-            x = self.x
-        result = Result()
+            x = self.x.copy()
+        result = Result()  # container to store regression result
+        # convert x and y to np.array if needed
         if type(y) is pd.DataFrame:
             result.y_name = list(y.columns)
             y = np.array(y)
         else:
-            result.y_name = ['y']
+            result.y_name = 'y'
         if type(x) is pd.DataFrame:
             result.x_name = list(x.columns)
             x = np.array(x)
         else:
             result.x_name = ['x'+str(i) for i in range(x.shape[1])]
+        # linear algebra for OLS
         beta_hat = np.matmul(np.matmul(np.linalg.inv(np.matmul(np.array(x).transpose(), np.array(x))), x.transpose()), y)
+        # store result
         result.coefficient = beta_hat
         result.y = y
         result.x = x
         result.residual = y - np.matmul(x, beta_hat)
+        result.r_squared = 1 - sum(result.residual ** 2) / sum((y - y.mean()) ** 2)
+        result.adjusted_r_squared = 1 - (sum(result.residual ** 2) / (x.shape[0] - x.shape[1])) / (sum((y - y.mean()) ** 2) / (x.shape[0] - 1))
+        result.sigma_squared = sum(result.residual ** 2) / (x.shape[0] - x.shape[1])  # error variance
+        result.covariance = result.sigma_squared * np.linalg.inv(np.matmul(np.array(x).transpose(), np.array(x)))
+        result.standard_error = np.sqrt(result.covariance.diagonal())
         return result
 
 
+# unit testing
 if __name__ == '__main__':
     n, k = 100, 2
     beta = np.array([1, 1, 10])
