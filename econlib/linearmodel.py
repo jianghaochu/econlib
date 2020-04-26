@@ -55,11 +55,6 @@ class LinearModel:
         result.y = y
         result.x = x
         result.residual = y - np.matmul(x, beta_hat)
-        result.r_squared = 1 - sum(result.residual ** 2) / sum((y - y.mean()) ** 2)
-        result.adjusted_r_squared = 1 - (sum(result.residual ** 2) / (x.shape[0] - x.shape[1])) / (sum((y - y.mean()) ** 2) / (x.shape[0] - 1))
-        result.sigma_squared = sum(result.residual ** 2) / (x.shape[0] - x.shape[1])  # error variance
-        result.covariance = result.sigma_squared * np.linalg.inv(np.matmul(np.array(x).transpose(), np.array(x)))
-        result.standard_error = np.sqrt(result.covariance.diagonal())
         return result
 
 
