@@ -24,6 +24,28 @@ class LinearModel:
         self.y = y
         self.x = x
 
+    def vif(self):
+        """Calculate the variance inflation factors."""
+        x = self.x.copy()
+        vif = pd.DataFrame()  # variance inflation factor
+        if type(x) is pd.DataFrame:
+            col_name = list(x.columns)
+        elif type(x) is np.ndarray:
+            col_name = ['x'+str(i) for i in range(x.shape[1])]
+            x = pd.DataFrame(x, columns=col_name)
+        else:
+            raise TypeError('Need to be either Pandas DataFrame or NumPy ndarray.')
+        rsquared = pd.DataFrame()
+        for name in col_name:
+            if pd.Series.nunique(x[name]) == 1:
+                continue
+            tmp_result = self.ols(x[name], x.drop(columns=[name]))
+            tmp = pd.DataFrame(tmp_result.coefficient.reshape(1, tmp_result.coefficient.shape[0]), index=[name], columns=tmp_result.x_name)
+            rsquared.loc[name, 'R_squared'] = tmp_result.r_squared
+            vif = pd.concat([vif, tmp])
+        vif.insert(0, 'R_squared', rsquared['R_squared'])
+        return vif
+
     def ols(self, y=None, x=None):
         """Ordinary least squares regression of a linear model.
 
@@ -67,3 +89,4 @@ if __name__ == '__main__':
     linear_model = LinearModel(y=yy, x=xx)
     ols_result = linear_model.ols()
     ols_result.summary()
+    linear_model.vif()

@@ -113,8 +113,7 @@ class Result:
         table.add_column('Coefficient', self.coefficient)
         table.add_column('Standard Error', standard_error)
         table.add_column('t', self.coefficient / standard_error)
-        fun = lambda x: t.cdf(x, df=self.x.shape[0] - self.x.shape[1])
-        table.add_column('Pr(>|t|)', 1-2*np.abs(0.5 - np.vectorize(fun)(self.coefficient / standard_error)))
+        table.add_column('Pr(>|t|)', 1-2*np.abs(0.5 - np.vectorize(t.cdf)(self.coefficient / standard_error, self.x.shape[0] - self.x.shape[1])))
         table.align['Variable'] = 'l'
         table.align['Coefficient'] = 'r'
         table.align['Standard Error'] = 'r'
